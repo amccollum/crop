@@ -1,0 +1,16 @@
+{
+    "name": "crop",
+    "version": "0.0.1",
+    "description": "Crop widget",
+    "keywords": ["ender", "crop"],
+    "author": "Andrew McCollum <amccollum@gmail.com>",
+    "url": "http://github.com/amccollum/crop",
+    "repositories": [{ "type": "git", "url": "https://github.com/amccollum/crop.git" }],
+    "licenses": [{ "type": "MIT", "url": "http://opensource.org/licenses/mit-license.php" }],
+    
+    "main": "lib/crop.js",
+    "ender": "lib/ender.js",
+    "directories": { "lib": "lib" },
+    
+    "devDependencies": { "coffee-script": "*" }
+}
