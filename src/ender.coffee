@@ -3,7 +3,7 @@
     $.ender({
         crop: () ->
             cropper = new crop.Cropper
-                el: this
+                target: this
                 
             return this
     }, true)
