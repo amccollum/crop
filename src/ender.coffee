@@ -3,7 +3,7 @@
     
     $.ender({
         crop: () ->
-            this.each
+            this.each (el) ->
                 cropper = new Cropper
                     el: this
                 
