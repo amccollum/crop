@@ -5,10 +5,11 @@
     
     class crop.Cropper extends Widget
         constructor: (options) ->
-            @target = $(options.target)
+            super()
+
             @aspectRatio = options.aspectRatio
 
-            @el = $('''
+            @cropEl = $('''
                 <div class="cropper">
                     <div class="overlay north"></div>
                     <div class="overlay south"></div>
@@ -26,25 +27,25 @@
             ''')
             
             if not @aspectRatio
-                @el.append('''
+                @cropEl.append('''
                     <div class="handle north"></div>
                     <div class="handle south"></div>
                     <div class="handle west"></div>
                     <div class="handle east"></div>
                 ''')
 
-            @el.bind 'mousedown', @_mousedown
-            $('body').append(@el)
+            @cropEl.bind 'mousedown', @_mousedown
+            $('body').append(@cropEl)
             
         init: ->
             @destroyed = false
-            @el.css
+            @cropEl.css
                 'cursor': 'crosshair'
 
             @x1 = @x2 = @y1 = @y2 = null
             @xMin = @yMin = @xMid = @yMid = @xMax = @yMax = null
             
-            @$('*').hide()
+            @cropEl.find('*').hide()
         
             # Animate the marching ants
             step = -1
@@ -53,18 +54,26 @@
                     return false
                 
                 step = (step + 1) % 120
-                @$('.border.north .ants, .border.south .ants').css
+                @cropEl.find('.border.north .ants, .border.south .ants').css
                     'margin-left': -120 + step
                     
-                @$('.border.west .ants, .border.east .ants').css
+                @cropEl.find('.border.west .ants, .border.east .ants').css
                     'margin-top': -120 + step
 
                 return true
+                
+        coords: ->
+            return {
+                top: @yMin
+                left: @xMin
+                width: @xMax - @xMin
+                height: @yMax - @yMin
+            } 
 
         create: ->
-            @offset = @target.offset()
+            @offset = @el.offset()
             
-            @el.css
+            @cropEl.css
                 'position': 'absolute'
                 'z-index': 1000
                 'top': @offset.top
@@ -72,50 +81,50 @@
                 'width': @offset.width
                 'height': @offset.height
     
-            @$('*').css
+            @cropEl.find('*').css
                 'position': 'absolute'
             
-            @$('.handle').css
+            @cropEl.find('.handle').css
                 'width': '9px'
                 'height': '9px'
                 'border': '1px solid rgba(240, 240, 240, 0.6)'
                 'background-color': 'rgba(16, 16, 16, 0.5)'
             
-            @$('.overlay').css
+            @cropEl.find('.overlay').css
                 'cursor': 'crosshair'
                 'background-color': 'rgba(0, 0, 0, 0.4)'
 
-            @$('.border').css
+            @cropEl.find('.border').css
                 'background-color': 'rgba(0, 0, 0, 0.4)'
                 'overflow': 'hidden'
                 
-            @$('.ants').css
+            @cropEl.find('.ants').css
                 'width': @offset.width + 132
                 'height': @offset.height + 132
                 'border': '2px dashed rgba(240, 240, 240, 0.4)'
             
-            @$('.handle.north').css
+            @cropEl.find('.handle.north').css
                 'cursor': 'n-resize'
 
-            @$('.handle.south').css
+            @cropEl.find('.handle.south').css
                 'cursor': 's-resize'
             
-            @$('.handle.west').css
+            @cropEl.find('.handle.west').css
                 'cursor': 'w-resize'
             
-            @$('.handle.east').css
+            @cropEl.find('.handle.east').css
                 'cursor': 'e-resize'
             
-            @$('.handle.north.west').css
+            @cropEl.find('.handle.north.west').css
                 'cursor': 'nw-resize'
             
-            @$('.handle.north.east').css
+            @cropEl.find('.handle.north.east').css
                 'cursor': 'ne-resize'
             
-            @$('.handle.south.west').css
+            @cropEl.find('.handle.south.west').css
                 'cursor': 'sw-resize'
             
-            @$('.handle.south.east').css
+            @cropEl.find('.handle.south.east').css
                 'cursor': 'se-resize'
         
         destroy: ->    
@@ -132,70 +141,70 @@
             @yMid = @yMin + (@yMax - @yMin) / 2
         
             # Overlays
-            @$('.overlay.north').css
+            @cropEl.find('.overlay.north').css
                 'top': 0
                 'bottom': (@offset.height - @yMin)
                 'left': 0
                 'right': 0
                 
-            @$('.overlay.south').css
+            @cropEl.find('.overlay.south').css
                 'top': @yMax
                 'bottom': 0
                 'left': 0
                 'right': 0
 
-            @$('.overlay.west').css
+            @cropEl.find('.overlay.west').css
                 'top': @yMin
                 'bottom': (@offset.height - @yMax)
                 'left': 0
                 'right': (@offset.width - @xMin)
 
-            @$('.overlay.east').css
+            @cropEl.find('.overlay.east').css
                 'top': @yMin
                 'bottom': (@offset.height - @yMax)
                 'right': 0
                 'left': @xMax
 
             # Borders
-            @$('.border.north').css
+            @cropEl.find('.border.north').css
                 'top': @yMin
                 'bottom': (@offset.height - @yMin) - 1
                 'left': @xMin
                 'right': (@offset.width - @xMax)
             
-            @$('.border.south').css
+            @cropEl.find('.border.south').css
                 'top': @yMax - 1
                 'bottom': (@offset.height - @yMax)
                 'left': @xMin
                 'right': (@offset.width - @xMax)
 
-            @$('.border.west').css
+            @cropEl.find('.border.west').css
                 'top': @yMin + 1
                 'bottom': (@offset.height - @yMax) + 1
                 'left': @xMin
                 'right': (@offset.width - @xMin) - 1
             
-            @$('.border.east').css
+            @cropEl.find('.border.east').css
                 'top': @yMin + 1
                 'bottom': (@offset.height - @yMax) + 1
                 'left': @xMax - 1
                 'right': (@offset.width - @xMax)
             
             # Handles
-            @$('.handle').css
+            @cropEl.find('.handle').css
                 'top': @yMid - 5
                 'left': @xMid - 5
             
-            @$('.handle.north').css
+            @cropEl.find('.handle.north').css
                 'top': @yMin - 5
             
-            @$('.handle.south').css
+            @cropEl.find('.handle.south').css
                 'top': @yMax - 6
                 
-            @$('.handle.west').css
+            @cropEl.find('.handle.west').css
                 'left': @xMin - 5
             
-            @$('.handle.east').css
+            @cropEl.find('.handle.east').css
                 'left': @xMax - 6
         
         _mousedown: (e) =>
@@ -210,7 +219,7 @@
             $(document).bind 'mousemove', @_resizemove
             $(document).bind 'mouseup', @_resizeend
             
-            @$('*').show()
+            @cropEl.find('*').show()
             @resizeX = @resizeY = true
             
             handle = $(e.target)
@@ -232,7 +241,7 @@
             else
                 @x1 = @x2 = clamp((e.clientX - @offset.left), 0, @offset.width)
                 @y1 = @y2 = clamp((e.clientY - @offset.top), 0, @offset.height)
-                @$('.handle').hide()
+                @cropEl.find('.handle').hide()
                 @_update()
         
         _resizemove: (e) =>
@@ -289,8 +298,8 @@
             if @x1 == @x2 and @y1 == @y2
                 @init()
             else
-                @$('.handle').show()
-                @el.css
+                @cropEl.find('.handle').show()
+                @cropEl.css
                     'cursor': 'move'
 
         _dragbegin: (e) =>
