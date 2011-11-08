@@ -12,5 +12,6 @@
     "ender": "lib/ender.js",
     "directories": { "lib": "lib" },
     
+    "dependencies": { "widget": "*", "timeout": "*" },
     "devDependencies": { "coffee-script": "*" }
 }
